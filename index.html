@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Vue.js Form</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+<body>
+    <div id="app">
+        <form @submit="submitForm">
+            <label for="city">Город:</label>
+            <select id="city" v-model="selectedCity" @change="updateWorkshops">
+                <option disabled value="">Выберите город</option>
+                <option v-for="city in cities" :value="city">{{ city }}</option>
+            </select>
+
+            <label for="workshop">Цех:</label>
+            <select id="workshop" v-model="selectedWorkshop" @change="updateEmployees">
+                <option disabled value="">Выберите цех</option>
+                <option v-for="workshop in workshops" :value="workshop">{{ workshop }}</option>
+            </select>
+
+            <label for="employee">Сотрудник:</label>
+            <select id="employee" v-model="selectedEmployee">
+                <option disabled value="">Выберите сотрудника</option>
+                <option v-for="employee in employees" :value="employee">{{ employee }}</option>
+            </select>
+
+            <label for="team">Бригада:</label>
+            <select id="team" v-model="selectedTeam">
+                <option v-if="isDayTime" value="1">Первая бригада</option>
+                <option v-else value="2">Вторая бригада</option>
+            </select>
+
+            <label for="shift">Смена:</label>
+            <input type="text" id="shift" v-model="selectedShift">
+
+            <button type="submit">Сохранить</button>
+        </form>
+    </div>
+
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                selectedCity: '',
+                selectedWorkshop: '',
+                selectedEmployee: '',
+                selectedTeam: '',
+                selectedShift: '',
+                cities: ['Москва', 'Санкт-Петербург', 'Казань'],
+                workshops: [],
+                employees: [],
+                isDayTime: true
+            },
+            methods: {
+                updateWorkshops: function() {
+                    // Определение доступных цехов в зависимости от выбранного города
+                    switch (this.selectedCity) {
+                        case 'Москва':
+                            this.workshops = ['Цех 1', 'Цех 2', 'Цех 3'];
+                            break;
+                        case 'Санкт-Петербург':
+                            this.workshops = ['Цех A', 'Цех B', 'Цех C'];
+                            break;
+                        case 'Казань':
+                            this.workshops = ['Цех X', 'Цех Y', 'Цех Z'];
+                            break;
+                        default:
+                            this.workshops = [];
+                            break;
+                    }
+                    this.selectedWorkshop = '';
+                    this.employees = [];
+                    this.selectedEmployee = '';
+                    this.selectedTeam = '';
+                },
+                updateEmployees: function() {
+                    // Определение доступных сотрудников в зависимости от выбранного цеха
+                    switch (this.selectedWorkshop) {
+                        case 'Цех 1':
+                            this.employees = ['Иванов', 'Петров', 'Сидоров'];
+                            break;
+                        case 'Цех 2':
+                            this.employees = ['Смирнов', 'Иванов', 'Кузнецов'];
+                            break;
+                        case 'Цех 3':
+                            this.employees = ['Соколов', 'Попов', 'Лебедев'];
+                            break;
+                        case 'Цех A':
+                            this.employees = ['Johnson', 'Williams', 'Brown'];
+                            break;
+                        case 'Цех B':
+                            this.employees = ['Smith', 'Anderson', 'Clark'];
+                            break;
+                        case 'Цех C':
+                            this.employees = ['Taylor', 'Thomas', 'Robinson'];
+                            break;
+                        case 'Цех X':
+                            this.employees = ['Lee', 'Kim', 'Park'];
+                            break;
+                        case 'Цех Y':
+                            this.employees = ['Choi', 'Yoon', 'Jang'];
+                            break;
+                        case 'Цех Z':
+                            this.employees = ['Ivanov', 'Petrov', 'Sidorov'];
+                            break;
+                        default:
+                            this.employees = [];
+                            break;
+                    }
+                    this.selectedEmployee = '';
+                    this.selectedTeam = '';
+                },
+                submitForm: function(event) {
+                    event.preventDefault();
+                    
+                    // Сохранение результатов в Cookie
+                    var formData = {
+                        city: this.selectedCity,
+                        workshop: this.selectedWorkshop,
+                        employee: this.selectedEmployee,
+                        team: this.selectedTeam,
+                        shift: this.selectedShift
+                    };
+                    
+                    document.cookie = "form_data=" + JSON.stringify(formData);
+                    
+                    alert("Результаты формы сохранены в Cookie!");
+                }
+            },
+            created: function() {
+                // Определение времени суток
+                var currentHour = new Date().getHours();
+                this.isDayTime = currentHour >= 8 && currentHour < 20;
+            }
+        });
+    </script>
+</body>
+</html>
